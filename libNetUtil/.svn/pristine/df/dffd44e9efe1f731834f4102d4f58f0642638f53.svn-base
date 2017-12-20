@@ -1,0 +1,28 @@
+// libWinRest.cpp : 定义 DLL 应用程序的导出函数。
+//
+
+#include "stdafx.h"
+#include "../include/libNetUtil.h"
+//
+
+#define LOG_E(a) cout<<a<<"\n";
+#include "TCPClient.h"
+using namespace libNetUtil;
+std::shared_ptr<ITCPClient> libNetUtil::ITCPClient::makeSharedInst()
+{
+	return std::make_shared<TCPClient>();
+}
+
+void main()
+{
+	std::shared_ptr<ITCPClient> c = ITCPClient::makeSharedInst();
+	ITCPClient::Param p;
+	p.host = "192.168.1.25";
+	p.port = 1234;
+	p.rEndDelim = "!@#$";
+	c->init(p);
+	string s = "hello world";
+	c->asyncWrite((void*)s.data(),s.size(),nullptr);
+	getchar();
+	c->release();
+}
